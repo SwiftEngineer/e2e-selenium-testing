@@ -1,0 +1,33 @@
+version: '3'
+services:
+  ui:
+    build: ./elm-todomvc
+    ports:
+      - 8000:8000
+
+  # chrome:
+  #   image: selenium/node-chrome:3.141.59-dubnium
+  #   volumes:
+  #     - /dev/shm:/dev/shm
+  #   depends_on:
+  #     - hub
+  #   environment:
+  #     HUB_HOST: hub
+
+  # for local debugging of tests. 
+  # will run a VNC server that you can hook up to to view the tests
+  chrome_debug:
+    image: selenium/node-chrome-debug:3.141.59-dubnium
+    volumes:
+      - /dev/shm:/dev/shm
+    depends_on:
+      - hub
+    environment:
+      HUB_HOST: hub
+    ports:
+      - "5900:5900"
+
+  hub:
+    image: selenium/hub:3.141.59-dubnium
+    ports:
+      - "4444:4444"

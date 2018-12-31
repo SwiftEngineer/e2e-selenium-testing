@@ -27,13 +27,18 @@ const driverManager = new DriverManager();
 
 // use driver to run test suite
 driverManager.runWithDriver((done) => {
-    
-    // Run the tests.
-    mocha.run(function(failures) {
+    try {
+        // Run the tests.
+        mocha.run(function(failures) {
+            done();
+            
+            // exit with non-zero status if there were failures
+            process.exitCode = failures ? 1 : 0;
+        });
+    } catch(err) {
+        console.log("Tests failed dramatically. Forcefully cleaning up...");
+        console.error(err);
         done();
-        
-        // exit with non-zero status if there were failures
-        process.exitCode = failures ? 1 : 0;
-    });
+    }
     
 });

@@ -1,47 +1,53 @@
-const {driver} = require("../driver");
-const {Builder, By, until, Key} = require("selenium-webdriver");
+import { driver } from "../driver";
+import { By, Actions } from "selenium-webdriver";
 
 export class Todo {
     
     /**
-     * Create a page object for the Todo page.
+     * Create a page object for a single Todo.
      */
-    constructor() {
-        return (async () => {
-            await driver.get("http://ui:8000/index.html");
-            return this;
+    constructor(elem) {
+        this.todo = elem;
+        return this;
+    }
+
+    /**
+     * Create a promise to fetch the label for the todo.
+     * 
+     * @returns {Promise}
+     */
+    getLabel() {
+        return (async () => { 
+            // get the label element
+            const label = await this.todo.findElement(By.css("div.view label"));
+
+            // return the text inside it
+            return await label.getText();
         })();
     }
 
+
     /**
-     * Count how many Todo items exist.
-     *
-     * @param {String} nameForTodo
+     * Delete the todo.
+     * 
+     * @returns {Promise} a promise to delete the Todo
      */
-    async countTodos() {
-        // make sure the todo list has been rendered already
-        await driver.wait(until.elementLocated(By.css(".todo-list")), 2500);
-
-        const todoItems = await driver.findElements(By.css(".todo-list li div.view label"))
-
-        // return the number of todos
-        return todoItems.length;
-    }
-    
-    
-    /**
-     * Create a Todo item and return it.
-     *
-     * @param {String} nameForTodo
-     */
-    async createTodo(nameForTodo = "my-todo") {
-        // find the new-todo component
-        const newTodo = await driver.wait(until.elementLocated(By.css(".new-todo")), 2500);
-        
-        // add a new todo
-        newTodo.sendKeys(nameForTodo, Key.ENTER);
-
-        // find the newly created todo
-        return await driver.wait(until.elementLocated(By.css(".todo-list li div.view label")), 2500);
+    delete() {
+        return (async () => { 
+            // hover the mouse over the element
+            const actions = driver.actions({ bridge: true });
+                
+            const mouse = actions.mouse();
+                
+            actions.pause(mouse)
+                .move({ origin: this.todo })
+                .pause(500)
+                .move({ origin: await this.todo.findElement(By.css(".destroy")) })
+                .press()
+                .release()
+                .pause(500);
+                
+            await actions.perform();
+        })();
     }
 }

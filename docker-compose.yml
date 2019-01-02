@@ -1,10 +1,13 @@
 version: '3'
 services:
+  
+  # the app we are testing
   ui:
     build: ./elm-todomvc
     ports:
       - 8000:8000
 
+  # this is the actual test runner
   testing:
     build: ./tests
     ports:
@@ -36,6 +39,7 @@ services:
     ports:
       - "5900:5900"
 
+  # the webdriver hub
   hub:
     image: selenium/hub:3.141.59-dubnium
     ports:

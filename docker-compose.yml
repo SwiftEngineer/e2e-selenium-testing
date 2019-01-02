@@ -5,6 +5,15 @@ services:
     ports:
       - 8000:8000
 
+  testing:
+    build: ./tests
+    ports:
+      - "1337:1337"
+    links: 
+      - "hub:webdriver"
+
+  # replacement for chrome_debug when running tests
+  # in CI for instance.
   # chrome:
   #   image: selenium/node-chrome:3.141.59-dubnium
   #   volumes:

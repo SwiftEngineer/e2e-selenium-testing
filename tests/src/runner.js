@@ -8,7 +8,7 @@ const Mocha = require('mocha'),
 
 // create mocha test suite
 const mocha = new Mocha({
-    reporter: 'json'
+    reporter: 'mochawesome'
 });
 
 // Add all test files to the mocha runner
@@ -32,6 +32,9 @@ driverManager.runWithDriver((done) => {
         mocha.run(function(failures) {
             done();
             
+            // host the results on the webserver
+            require("./server");
+
             // exit with non-zero status if there were failures
             process.exitCode = failures ? 1 : 0;
         });
